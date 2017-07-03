@@ -1,0 +1,60 @@
+Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used:
+		selected layers only:  false
+		flat shading entire scene:  false
+		inline textures:  false
+		texture directory:  C:\Users\Huzky\College\Project Webgames\Wanted Prototype\assets\models\foxxy\
+	Python World class constructor completed
+	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
+	processing begun of skeleton:  Armature, id:  0
+		processing begun of bone:  Core, index:  0
+		processing begun of bone:  Torso, index:  1
+		processing begun of bone:  Head, index:  2
+		processing begun of bone:  Tail, index:  3
+		processing begun of bone:  Wrist.L, index:  4
+		processing begun of bone:  Hand.L, index:  5
+		processing begun of bone:  Fingers.L, index:  6
+		processing begun of bone:  Index.L, index:  7
+		processing begun of bone:  Thumb.L, index:  8
+		processing begun of bone:  Calf.L, index:  9
+		processing begun of bone:  Elbow.IK.L, index:  10
+		processing begun of bone:  UpperArm.L, index:  11
+		processing begun of bone:  Forearm.L, index:  12
+		processing begun of bone:  Knee.IK.L, index:  13
+		processing begun of bone:  Thigh.L, index:  14
+		processing begun of bone:  Shin.L, index:  15
+		processing begun of bone:  Wrist.R, index:  16
+		processing begun of bone:  Hand.R, index:  17
+		processing begun of bone:  Fingers.R, index:  18
+		processing begun of bone:  Thumb.R, index:  19
+		processing begun of bone:  Index.R, index:  20
+		processing begun of bone:  Calf.R, index:  21
+		processing begun of bone:  Elbow.IK.R, index:  22
+		processing begun of bone:  UpperArm.R, index:  23
+		processing begun of bone:  Forearm.R, index:  24
+		processing begun of bone:  Knee.IK.R, index:  25
+		processing begun of bone:  Thigh.R, index:  26
+		processing begun of bone:  Shin.R, index:  27
+		processing action ArmatureAction:  in[0 - 124], out[0 - 124]
+	processing begun of mesh:  Cylinder
+		processing begun of Standard material:  Texture
+			Diffuse texture found "Texture"
+				Image texture found, type:  diffuseTexture, mapped using: "UVMap"
+	WARNING: Error encountered processing image file:  , Error:  'C:\\Users\\Huzky\\College\\Project Webgames\\Wanted Prototype\\assets\\models\\foxxy\\foxxy.jpg' and 'C:\\Users\\Huzky\\College\\Project Webgames\\Wanted Prototype\\assets\\models\\foxxy\\foxxy.jpg' are the same file
+		num positions      :  6090
+		num normals        :  6090
+		num uvs            :  12180
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6090
+		Skeleton stats:  
+			Total Influencers:  15658
+			Avg # of influencers per vertex:  2.5711
+			Highest # of influencers observed:  6, num vertices with this:  12
+			exported as 6 influencers
+			num skeletonWeights and skeletonIndices:  48720
+========= Writing of scene file started =========
+========= Writing of scene file completed =========
+========= end of processing =========
+elapsed time:  0 min, 1.8136 secs

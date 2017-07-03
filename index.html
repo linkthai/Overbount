@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Babylon - Basic scene</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+     <link rel="shortcut icon" href="favicon.ico">
+
+    <script src="js/babylon.js"></script>
+    <script src="js/cannon.js"></script>
+    <script src="js/oimo.js"></script>
+    <script src="js/hand-1.3.7.js"></script>
+
+    <!-- <script src="js/initScene.js"></script> -->
+</head>
+
+<body>
+
+    <canvas id="renderCanvas"></canvas>
+
+    <script>
+        if (BABYLON.Engine.isSupported()) {
+        var canvas = document.getElementById("renderCanvas");
+        var engine = new BABYLON.Engine(canvas, true);
+        var assetsManager;
+        engine.enableOfflineSupport = false;
+
+        // This begins the creation of a function that we will 'call' just after it's built
+        var createScene = function () {
+
+          // Now create a basic Babylon Scene object
+          var scene = new BABYLON.Scene(engine);
+
+          // Change the scene background color to green.
+          scene.clearColor = new BABYLON.Color3(0.4, 0.7, 0.86);
+
+          // This creates and positions a free camera
+          var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+
+          // This targets the camera to scene origin
+          camera.setTarget(BABYLON.Vector3.Zero());
+
+          // This attaches the camera to the canvas
+          camera.attachControl(canvas, false);
+
+          // This creates a light, aiming 0,1,0 - to the sky.
+          var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+
+          // Dim the light a small amount
+          light.intensity = .75;
+          //
+          // // Let's try our built-in 'sphere' shape. Params: name, subdivisions, size, scene
+          // var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+          //
+          // // Move the sphere upward 1/2 its height
+          // sphere.position.y = 0;
+
+          // Let's try our built-in 'ground' shape.  Params: name, width, depth, subdivisions, scene
+          var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
+          scene.ambientColor = new BABYLON.Color3(0.75, 0.75, 0.75);
+
+          // Leave this function
+          return scene;
+
+        };  // End of createScene function
+        //var scene = createScene();
+        // BABYLON.SceneLoader.Load("", "assets/models/shibe/shibe.babylon", engine, function (scene) {
+        //
+        //
+        //
+        //     // Wait for textures and shaders to be ready
+        //     scene.executeWhenReady(function () {
+        //         // Attach camera to canvas inputs
+        //         scene.activeCamera.attachControl(canvas);
+        //
+        //         var camera = scene.activeCamera;
+        //
+        //         // Once the scene is loaded, just register a render loop to render it
+        //         engine.runRenderLoop(function() {
+        //             scene.render();
+        //         });
+        //
+        //     });
+        //
+        // }, function (progress) {
+        //     // To do: give progress feedback to user
+        //
+        // });
+
+        var scene = new BABYLON.Scene(engine);
+        BABYLON.SceneLoader.Load("", "assets/scene/test1.babylon", engine, function (newScene) {
+
+          scene = newScene;
+
+             // Wait for textures and shaders to be ready
+             scene.executeWhenReady(function () {
+                 // Attach camera to canvas inputs
+                 //
+                //  var camera = scene.activeCamera;
+
+                var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 8, -10), scene);
+                //camera.setTarget(BABYLON.Vector3.Zero());
+
+                // This attaches the camera to the canvas
+                //camera.attachControl(canvas, false);
+                scene.activeCamera.attachControl(canvas);
+
+                scene.ambientColor = new BABYLON.Color3(0.65, 0.65, 0.65);
+
+                 // Once the scene is loaded, just register a render loop to render it
+                 engine.runRenderLoop(function() {
+                     scene.render();
+                 });
+
+                 assetsManager = new BABYLON.AssetsManager(scene);
+
+                 loadModel();
+
+             });
+
+         }, function (progress) {
+             // To do: give progress feedback to user
+
+         });
+
+         var loadModel = function()
+         {
+        var current = "forward";
+          var shibe;
+          var skeleton;
+          var grizz;
+          // var torsoBones = ["Head", "Neck", "Chest", "Stomach", "Gun", "UpperArm.L", "UpperArm.R", "Forearm.L", "Forearm.R", "Hand.L", "Hand.R"];
+          // var bottomBones = ["Tail", "Thigh.L", "Thigh.R", "Shin.L", "Shin.R", "Feet.L", "Feet.R"];
+//          var torsoBones = [0, 1, 2, 5, 6, 7, 8, 9, 10, 14, 15, 18, 19];
+//          var bottomBones = [3, 4, 11, 12, 13, 16, 17, 20, 21];
+
+     var topBones = [2, 4, 5, 6, 9, 11, 13, 14, 15, 16, 17, 22, 23, 24, 25];
+     var bottomBones = [0, 1, 3, 7, 8, 10, 12, 18, 19, 20, 21];
+
+                               BABYLON.SceneLoader.ImportMesh("", "assets/models/foxxy/", "foxxy.babylon", scene, function (newMeshes, particleSystems, skeletons) {
+                                 grizz = newMeshes[0];
+                                 grizz.skeleton = skeletons[0]
+                                 grizz.material.backFaceCulling = false;
+                                 grizz.position = BABYLON.Vector3.Zero();
+                                 console.log("GRIZZ");
+                              
+                                   grizz.skeleton.bones.forEach(function(bone) {
+                          		 	   bone.animations.forEach(function(animation) {
+                          		 		  animation.enableBlending = true;
+                          		 		  animation.blendingSpeed = 0.1;
+                          		 	   });
+                          		 	});
+
+//                              var meshTask = assetsManager.addMeshTask("Load Grizz", "", "assets/models/grizz/", "grizz.babylon");
+//                               meshTask.onSuccess = function (task) {
+//                                    grizz = task.loadedMeshes[0];
+//                                  //scene.beginAnimation(grizz.skeleton, 109, 120, true, 1);
+//
+//                                          grizz.skeleton.bones.forEach(function(bone) {
+//                          		 	   bone.animations.forEach(function(animation) {
+//                          		 		  animation.enableBlending = true;
+//                          		 		  animation.blendingSpeed = 0.1;
+//                          		 	   });
+//                          		 	});
+//
+//                                    var i;
+//                                   for (i = 0; i < topBones.length; i++)
+//                                   {
+//                                     scene.beginAnimation(grizz.skeleton.bones[topBones[i]], 89, 103, true, 1);
+//                                   }
+//
+//                                    i = 0;
+//                                   for (i = 0; i < bottomBones.length; i++)
+//                                   {
+//                                     scene.beginAnimation(grizz.skeleton.bones[bottomBones[i]], 22, 41, true, 1);
+//                                   }
+//                                    //grizz.setEnabled(0);
+//                               };
+//                               assetsManager.load();
+                                    
+                                    //FOXXY
+                                //Idle
+                                //scene.beginAnimation(skeletons[0], 1, 19, true, 0.6);
+
+                                //Run forward
+                                //scene.beginAnimation(skeletons[0], 21, 37, true, 0.8);
+
+                                  //Run backwảd
+                                  //scene.beginAnimation(skeletons[0], 39, 51, true, 0.6);
+
+                                  //Run left
+                                  //scene.beginAnimation(skeletons[0], 53, 63, true, 0.7);
+
+                                  //Run right
+                                  //scene.beginAnimation(skeletons[0], 65, 73, true, 0.7);
+
+                                  //Reload
+                                  //scene.beginAnimation(skeletons[0], 73, 92, true, 0.4);
+
+                                  //Shoot
+                                  //scene.beginAnimation(skeletons[0], 75, 88, true, 0.9);
+                                    
+                                  //Shoot
+                                  //scene.beginAnimation(skeletons[0], 89, 102, true, 0.9);
+
+                                  //Die
+                                  scene.beginAnimation(skeletons[0], 103, 123, false, 1);
+                                    
+                                    //BUNNY
+                                //Idle
+                                //scene.beginAnimation(skeletons[0], 1, 19, true, 0.6);
+
+                                //Run forward
+                                //scene.beginAnimation(skeletons[0], 21, 36, true, 0.7);
+
+                                  //Run backwảd
+                                  //scene.beginAnimation(skeletons[0], 39, 50, true, 0.65);
+
+                                  //Run left
+                                  //scene.beginAnimation(skeletons[0], 53, 60, true, 0.5);
+
+                                  //Run right
+                                  //scene.beginAnimation(skeletons[0], 63, 70, true, 0.5);
+
+                                  //Reload
+                                  //scene.beginAnimation(skeletons[0], 73, 92, true, 0.4);
+
+                                  //Shoot
+                                  //scene.beginAnimation(skeletons[0], 119, 138, true, 0.9);
+
+                                  //Die
+                                  //scene.beginAnimation(skeletons[0], 109, 120, true, 1);
+                                });
+
+
+
+//                              BABYLON.SceneLoader.ImportMesh("", "assets/models/shibe/", "shibe.babylon", scene, function (newMeshes, particleSystems, skeletons) {
+//                                 shibe = newMeshes[0];
+//                                   shibe.skeleton = newMeshes[0].skeleton;
+//                                 shibe.material.backFaceCulling = false;
+//                                 shibe.position.y = 0;
+//
+//                                 skeleton.bones.forEach(function(bone) {
+//                        			    bone.animations.forEach(function(animation) {
+//                        			 	  animation.enableBlending = true;
+//                        			 	  animation.blendingSpeed = 0.1;
+//                        			    });
+//                        			 });
+                              // scene.beginAnimation(grizz.skeleton, 22, 41, true, 0.8);
+                        			//console.log(skeleton);
+
+                        			//skeletons[0].createAnimationRange("forward",25, 40); //  define dance 1 animation
+                        			//skeletons[0].createAnimationRange("backward",45, 60); //  define dance 2 animation
+                                //skeletons[0].createAnimationRange("reload",110, 135);
+
+
+                                //Idle
+                                //scene.beginAnimation(skeletons[0], 1, 20, true, 0.8);
+
+                                //Run forward
+                                //scene.beginAnimation(skeletons[0], 24, 40, true, 1);
+                                //skeletons[0].beginAnimation("forward", true, 1);
+
+                                //Run backward
+                                //scene.beginAnimation(skeletons[0], 45, 60, true, 1);
+
+                                //Run left
+                                //scene.beginAnimation(skeletons[0], 65, 80, true, 1);
+
+                                //Run right
+                                //scene.beginAnimation(skeletons[0], 85, 100, true, 1);
+
+                                //shoot
+                                //scene.beginAnimation(skeletons[0], 105, 107, true, 0.6);
+
+                                //reload
+                                //skeletons[0].beginAnimation("reload", true, 1);
+
+                                //dead
+                              //  scene.beginAnimation(skeletons[0], 135, 160, true, 1.5);
+                            //});
+
+//                             var shootAndRun = function()
+//                             {
+//                                   var i;
+//                                   for (i = 0; i < torsoBones.length; i++)
+//                                   {
+//                                     scene.beginAnimation(shibe.skeleton.bones[torsoBones[i]], 110, 135, true, 1);
+//                                   }
+//
+//                                   for (i = 0; i < bottomBones.length; i++)
+//                                   {
+//                                     scene.beginAnimation(shibe.skeleton.bones[bottomBones[i]], 45, 60, true, 1);
+//                                   }
+//                             };
+//
+//                             shootAndRun();
+
+                             //change animation dance each 5 secs
+                                           engine.runRenderLoop(function () {
+                                             scene.render();
+                                           });
+         }
+
+    }
+    </script>
+
+    <script>
+      // var CreateCellShadingScene = function(engine) {
+      //
+      //   var CellShadingMaterial = function(name, scene, light) {
+      //     this.name = name;
+      //     this.id = name;
+      //     this.light = light;
+      //     this._scene = scene;
+      //     scene.materials.push(this);
+      //     this.texture = null;
+      //     this.toonThresholds = [0.95, 0.5, 0.2, 0.03];
+      //     this.toonBrightnessLevels = [1.0, 0.8, 0.6, 0.35, 0.01];
+      //   };
+      //
+      //   CellShadingMaterial.prototype = Object.create(BABYLON.Material.prototype);
+      //   // Properties
+      //   CellShadingMaterial.prototype.needAlphaBlending = function() { return false; };
+      //   CellShadingMaterial.prototype.needAlphaTesting = function () { return false; };
+      //   // Methods
+      //   CellShadingMaterial.prototype.isReady = function (mesh) {
+      //       var engine = this._scene.getEngine();
+      //       if (this.texture && !this.texture.isReady) { return false; }
+      //       this._effect = engine.createEffect("/shaders/cellShading", ["position", "normal", "uv"],
+      //                                           ["worldViewProjection", "world", "view", "vLightPosition", "vLightColor", "ToonBrightnessLevels", "ToonThresholds"],
+      //                                           ["textureSampler"],"");
+      //       if (!this._effect.isReady()) { return false; }
+      //       return true;
+      //     };
+      //   CellShadingMaterial.prototype.bind = function (world, mesh) { this._effect.setMatrix("world", world);
+      //                 this._effect.setMatrix("worldViewProjection", world.multiply(this._scene.getTransformMatrix()));
+      //                 this._effect.setVector3("vLightPosition", this.light.position);
+      //                 this._effect.setColor3("vLightColor", this.light.diffuse);
+      //                 this._effect.setArray("ToonThresholds", this.toonThresholds);
+      //                 this._effect.setArray("ToonBrightnessLevels", this.toonBrightnessLevels);
+      //                 // Textures
+      //                 this._effect.setTexture("shibe-texture.jpg", this.texture);
+      //               };
+      //   CellShadingMaterial.prototype.dispose = function () {
+      //      if (this.texture) { this.texture.dispose(); }
+      //      this.baseDispose();
+      //    };
+      //
+      //    var scene = new BABYLON.Scene(engine);
+      //    var camera = new BABYLON.ArcRotateCamera("Camera", 0, Math.PI / 4, 40, BABYLON.Vector3.Zero(), scene);
+      //    var light = new BABYLON.PointLight("Omni", new BABYLON.Vector3(20, 100, 2), scene);
+      //    var sphere = BABYLON.Mesh.CreateSphere("Sphere0", 32, 3, scene);
+      //     var cylinder = BABYLON.Mesh.CreateCylinder("Sphere1", 5, 3, 2, 32, scene);
+      //     var torus = BABYLON.Mesh.CreateTorus("Sphere2", 3, 1, 32, scene);
+      //     var cellShadingMaterial = new CellShadingMaterial("mat0", scene, light);
+      //
+      //     sphere.material = cellShadingMaterial;
+      //     sphere.diffuseColor = new BABYLON.Color3(1, 0, 0);
+      //     sphere.position = new BABYLON.Vector3(-10, 0, 0);
+      //     cylinder.material = cellShadingMaterial;
+      //     torus.material = cellShadingMaterial;
+      //     torus.position = new BABYLON.Vector3(10, 0, 0);
+      //
+      //     // Animations
+      //     var alpha = 0;
+      //     scene.registerBeforeRender(function () {
+      //       sphere.rotation.y = alpha;
+      //       sphere.rotation.x = alpha;
+      //       cylinder.rotation.y = alpha;
+      //       cylinder.rotation.x = alpha;
+      //       torus.rotation.y = alpha;
+      //       torus.rotation.x = alpha;
+      //       alpha += 0.05;
+      //     });
+      //     return scene;};
+      //
+      //     // Get the canvas element from our HTML above
+      //     var canvas = document.getElementById("renderCanvas");
+      //
+      //     // Load the BABYLON 3D engine
+      //     var engine = new BABYLON.Engine(canvas, true);
+      //
+      //     var scene = CreateCellShadingScene(engine);
+      //
+      //     // Register a render loop to repeatedly render the scene
+      //     engine.runRenderLoop(function() {
+      //         scene.render();
+      //     });
+      // var CreateCellShadingScene = function (engine)
+      // {
+      //   var CellShadingMaterial = function (name, scene, light)
+      //   {
+      //     this.name = name;
+      //     this.id = name;
+      //     this.light = light;
+      //     this._scene = scene;
+      //     scene.materials.push(this);
+      //     this.texture = null;
+      //     this.toonThresholds = [0.95, 0.5, 0.2, 0.03];
+      //     this.toonBrightnessLevels = [1.0, 0.8, 0.6, 0.35, 0.01];
+      //   };
+      //
+      //   CellShadingMaterial.prototype = Object.create(BABYLON.Material.prototype);
+      //   // Properties
+      //   CellShadingMaterial.prototype.needAlphaBlending = function ()
+      //   {
+      //     return false;
+      //   };
+      //   CellShadingMaterial.prototype.needAlphaTesting = function ()
+      //   {
+      //     return false;
+      //   };
+      //
+      //    // Methods
+      //    CellShadingMaterial.prototype.isReady = function (mesh)
+      //    {
+      //      var engine = this._scene.getEngine();
+      //      if (this.texture && !this.texture.isReady)
+      //      {
+      //        return false;
+      //      }
+      //      this._effect = engine.createEffect("./Scenes/Customs/shaders/cellShading", ["position", "normal", "uv"],
+      //      ["worldViewProjection", "world", "view", "vLightPosition", "vLightColor", "ToonBrightnessLevels", "ToonThresholds"], ["textureSampler"], "");
+      //              if (!this._effect.isReady())
+      //              {
+      //                return false;
+      //              }
+      //       return true;
+      //    };
+      //
+      //    CellShadingMaterial.prototype.bind = function (world, mesh)
+      //    {
+      //      this._effect.setMatrix("world", world);
+      //      this._effect.setMatrix("worldViewProjection", world.multiply(this._scene.getTransformMatrix()));
+      //      this._effect.setVector3("vLightPosition", this.light.position);
+      //      this._effect.setColor3("vLightColor", this.light.diffuse);
+      //      this._effect.setArray("ToonThresholds", this.toonThresholds);
+      //      this._effect.setArray("ToonBrightnessLevels", this.toonBrightnessLevels);
+      //
+      //      // Textures
+      //      this._effect.setTexture("shibe-texture", this.texture);
+      //    };
+      //
+      //    CellShadingMaterial.prototype.dispose = function () {
+      //      if (this.texture)
+      //      {
+      //        this.texture.dispose();
+      //      }
+      //      this.baseDispose();
+      //     };
+      //
+      //        var scene = new BABYLON.Scene(engine);
+      //        var camera = new BABYLON.ArcRotateCamera("Camera", 0, Math.PI / 4, 40, BABYLON.Vector3.Zero(), scene);
+      //        var light = new BABYLON.PointLight("Omni", new BABYLON.Vector3(20, 100, 2), scene);
+      //        var sphere = BABYLON.Mesh.CreateSphere("Sphere0", 32, 3, scene);
+      //         var cylinder = BABYLON.Mesh.CreateCylinder("Sphere1", 5, 3, 2, 32, scene);
+      //         var torus = BABYLON.Mesh.CreateTorus("Sphere2", 3, 1, 32, scene);
+      //         var cellShadingMaterial = new CellShadingMaterial("mat0", scene, light);
+      //
+      //         sphere.material = cellShadingMaterial;
+      //         sphere.diffuseColor = new BABYLON.Color3(1, 0, 0);
+      //         sphere.position = new BABYLON.Vector3(-10, 0, 0);
+      //         cylinder.material = cellShadingMaterial;
+      //         torus.material = cellShadingMaterial;
+      //         torus.position = new BABYLON.Vector3(10, 0, 0);
+      //
+      //         // Animations
+      //         var alpha = 0;
+      //         scene.registerBeforeRender(function () {
+      //           sphere.rotation.y = alpha;
+      //           sphere.rotation.x = alpha;
+      //           cylinder.rotation.y = alpha;
+      //           cylinder.rotation.x = alpha;
+      //           torus.rotation.y = alpha;
+      //           torus.rotation.x = alpha;
+      //           alpha += 0.05;
+      //         });
+      //         return scene;};
+      //
+      //         // Get the canvas element from our HTML above
+      //         var canvas = document.getElementById("renderCanvas");
+      //
+      //         // Load the BABYLON 3D engine
+      //         var engine = new BABYLON.Engine(canvas, true);
+      //
+      //         var scene = CreateCellShadingScene(engine);
+      //
+      //         // Register a render loop to repeatedly render the scene
+      //         engine.runRenderLoop(function() {
+      //             scene.render();
+      //         });
+      //       </script>
+</body>
+
+</html>
